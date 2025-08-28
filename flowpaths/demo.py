@@ -7,7 +7,7 @@ current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
 dt_time      = current_time.strftime("%H-%M")
 
-TIME_LIMIT = 300  # seconds
+TIME_LIMIT = 3
 test_dir   = "../../create-flow-graphs/"
 
 

@@ -2,7 +2,7 @@ import flowpaths as fp
 from collections import defaultdict
 import re
 
-TIME_LIMIT = 300  # seconds
+TIME_LIMIT = 3
 data  = "graphs-g5-w5000-k27-cyc_out.txt"
 data2 = "graphs-g5-w5000-k27-cyc-e0.75_out.txt"
 
@@ -168,7 +168,7 @@ def compute_metrics(grouped_data):
         if group['solved_safety'] > 0:
             results[width_range]['fixed_seqs_=1']  = 100 * sum(group['fixed_seqs_=1'])  / group['solved_safety']
             results[width_range]['fixed_seqs_>=1'] = 100 * sum(group['fixed_seqs_>=1']) / group['solved_safety']
-            
+
         # Calculate speedups
         if len(group['speedup']) > 0:
             results[width_range]['speedup'] = sum(group['speedup']) / len(group['speedup'])
