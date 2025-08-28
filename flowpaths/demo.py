@@ -44,6 +44,7 @@ def test_min_flow_decomp(filename: str):
     else:
         print("Model could not be solved.")
 
+    print(statistics)
     out.write(f"{statistics['node_number']},{statistics['edge_number']},{statistics['graph_width']}\n")
     out.write(f"solved_default: {solved_by_default}\n")
     out.write(f"time_default: {statistics['solve_time'] if solved_by_default else 0}\n")
