@@ -2,14 +2,11 @@ import flowpaths as fp
 import os
 from datetime import datetime
 
-
+TIME_LIMIT   = 3
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
 dt_time      = current_time.strftime("%H-%M")
-
-TIME_LIMIT = 3
-test_dir   = "../../create-flow-graphs/"
-
+test_dir     = "../../create-flow-graphs/"
 
 
 def test_min_flow_decomp(filename: str):
@@ -19,6 +16,7 @@ def test_min_flow_decomp(filename: str):
 
     out = open(filename + "_out_{}_{}.txt".format(dt_day, dt_time), "a")
     out.write(f"#Graph {graph.graph['id']}\n")
+    out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
     #Vanilla
     mfd_model = fp.MinFlowDecompCycles(
@@ -44,7 +42,6 @@ def test_min_flow_decomp(filename: str):
     else:
         print("Model could not be solved.")
 
-    out.write(f"{statistics['node_number']},{statistics['edge_number']},{statistics['graph_width']}\n")
     out.write(f"solved_default: {solved_by_default}\n")
     out.write(f"time_default: {statistics['solve_time'] if solved_by_default else 0}\n")
 
@@ -69,16 +66,16 @@ def test_min_flow_decomp(filename: str):
     if mfd_model.is_solved():
         assert(mfd_model.is_valid_solution()) # Keep this to verify the solution
         solved_by_safety = True
+        out.write(f"edge_variables=1: {statistics['edge_variables=1']}\n")
+        out.write(f"edge_variables>=1: {statistics['edge_variables>=1']}\n")
+        out.write(f"preprocess_safety: {statistics.get('safe_sequences_time',0)}\n")
+        out.write(f"number_of_nontrivial_SCCs: {statistics['number_of_nontrivial_SCCs']}\n")
+        out.write(f"size_of_largest_SCC: {statistics['size_of_largest_SCC']}\n")
     else:
         print("Model could not be solved.")
 
     out.write(f"solved_safety: {solved_by_safety}\n")
     out.write(f"time_safety: {statistics['solve_time'] if solved_by_safety else 0}\n")
-    out.write(f"edge_variables=1: {statistics['edge_variables=1']}\n")
-    out.write(f"edge_variables>=1: {statistics['edge_variables>=1']}\n")
-    out.write(f"preprocess_safety: {statistics.get('safe_sequences_time',0)}\n")
-    out.write(f"number_of_nontrivial_SCCs: {statistics['number_of_nontrivial_SCCs']}\n")
-    out.write(f"size_of_largest_SCC: {statistics['size_of_largest_SCC']}\n")
 
     out.close()
 
