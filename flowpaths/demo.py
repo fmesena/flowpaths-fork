@@ -33,6 +33,7 @@ def test_min_flow_decomp(filename: str):
 
     output_file = dataset + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)
 
+    out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
     print(graph)
