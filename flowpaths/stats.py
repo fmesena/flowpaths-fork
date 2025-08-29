@@ -1,7 +1,7 @@
 from collections import defaultdict
 import re
 
-TIME_LIMIT = 30
+TIME_LIMIT = 300
 #data  = "graphs-g5-w5000-k27-cyc_out.txt"
 #data2 = "graphs-g5-w5000-k27-cyc-e0.75_out.txt"
 data = "graphs-g5-w5000-k27-cyc_out_29-08_13-56.txt"

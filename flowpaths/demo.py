@@ -5,7 +5,7 @@ import argparse
 
 test_dir     = "../../create-flow-graphs/"
 SOLVER       = "gurobi"   # "highs"
-TIME_LIMIT   = 30
+TIME_LIMIT   = 300
 EDGE_FILTER  = 25
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
