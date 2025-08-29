@@ -1,10 +1,10 @@
-import flowpaths as fp
 from collections import defaultdict
 import re
 
 TIME_LIMIT = 30
-data  = "graphs-g5-w5000-k27-cyc_out.txt"
-data2 = "graphs-g5-w5000-k27-cyc-e0.75_out.txt"
+#data  = "graphs-g5-w5000-k27-cyc_out.txt"
+#data2 = "graphs-g5-w5000-k27-cyc-e0.75_out.txt"
+data = "graphs-g5-w5000-k27-cyc_out_29-08_13-56.txt"
 
 width_ranges = {
     "1-3": (1, 3),
@@ -22,9 +22,9 @@ def parse_input_file(filename):
     with open(filename, 'r') as file:
         for line in file:
             line = line.strip()
-
+            #print(line)
             if line.startswith('#Graph'):
-                current_graph = int(line.split()[1])
+                current_graph = str(line.split()[1])
 
             elif current_graph is not None:
                 if re.match(r'\d+,\s*\d+,\s*\d+', line): #pattern matching on 3 integers separated by commas with arbitrarily many spaces in between
@@ -39,7 +39,7 @@ def parse_input_file(filename):
                         'size_of_largest_SCC': None, 'number_of_nontrivial_SCCs': None
                     }
                 
-                elif 'solved' in line or 'time' in line or 'preprocess' in line or 'variable' in line or 'SCC' in line:
+                elif 'solved' in line or 'time' in line or 'preprocess' in line or 'edge' in line or 'SCC' in line:
 
                     key, value = line.split(':')
                     key = key.strip()
@@ -52,7 +52,7 @@ def parse_input_file(filename):
 
                     if key in data[current_graph]:
                         data[current_graph][key] = value
-
+    #print(data)
     return data
 
 
@@ -69,7 +69,7 @@ def group_by_width(parsed_data):
     grouped_data = {key: {
         'graphs': 0, 'vertices' : [], 'edges': [],
         'preprocess_safety': [],
-        'fixedvars_to_one': [], 'fixedvars_to_atleast_one': [],
+        'edge_variables=1': [], 'edge_variables>=1': [],
         'solved_default': 0, 'solved_safety': 0,
         'time_default': [], 'time_safety': [],
         'number_of_nontrivial_SCCs': [], 'size_of_largest_SCC': [],
@@ -85,7 +85,6 @@ def group_by_width(parsed_data):
                 group['graphs'] += 1
                 group['vertices'].append(n)
                 group['edges'].append(m)
-                group['widths'].append(w)
 
                 if info['solved_default'] and info['solved_safety']:
                     group['solved_in_every_setting'] += 1
@@ -135,8 +134,8 @@ def compute_metrics(grouped_data):
             'solved_safety': -1,
             'avg_time_default' : -1,
             'avg_time_safety' : -1,
-            'fixed_seqs_=1': -1,
-            'fixed_seqs_>=1': -1,
+            'edge_variables=1': -1,
+            'edge_variables>=1': -1,
             'avg_SCCs': -1,
             'largest_SCC': -1,
             'speedup': -1
@@ -153,7 +152,7 @@ def compute_metrics(grouped_data):
             results[width_range]['max_edges']   = max(group['edges'])
             results[width_range]['avg_SCCs']    = sum(group['number_of_nontrivial_SCCs']) / group['graphs']
             results[width_range]['size_of_largest_SCC'] = max(group['size_of_largest_SCC'])
-
+            
         # Average safety preprocessing time
         if len(group['preprocess_safety']) > 0:
             assert(len(group['preprocess_safety']) == group['graphs'])
@@ -167,8 +166,8 @@ def compute_metrics(grouped_data):
 
         # Average of fixed vars on solved instances
         if group['solved_safety'] > 0:
-            results[width_range]['fixed_seqs_=1']  = 100 * sum(group['fixed_seqs_=1'])  / group['solved_safety']
-            results[width_range]['fixed_seqs_>=1'] = 100 * sum(group['fixed_seqs_>=1']) / group['solved_safety']
+            results[width_range]['edge_variables=1']  = 100 * sum(group['edge_variables=1'])  / group['solved_safety']
+            results[width_range]['edge_variables>=1'] = 100 * sum(group['edge_variables>=1']) / group['solved_safety']
 
         # Calculate speedups
         if len(group['speedup']) > 0:
@@ -187,7 +186,7 @@ def generate_table(results):
                     & \multirow{2}{*}{\#g} 
                     & \multirow{2}{*}{\shortstack{avg $n$\\(max $n$)}} 
                     & \multirow{2}{*}{\shortstack{avg $m$\\(max $m$)}}
-                    & \multirow{2}{*}{\shortstack{avg SCC size\\(max size)}}
+                    & \multirow{2}{*}{\shortstack{avg num of nontrivial\\SCCs (max size)}}
                     & \multirow{2}{*}{prep (s)} 
                     & \multirow{2}{*}{\shortstack{vars \\ (\%)}} 
                     & \multicolumn{2}{c|}{\#solved (avg time (s))} 
@@ -198,22 +197,22 @@ def generate_table(results):
                     \multirow{3}{*}{\rotatebox{90}{\shortstack{\textbf{Dataset}\\\textbf{name}}}}'''
 
     for width_range, metrics in results.items():
-        preprocess_seqs         = f"{metrics['preprocess_seqs']:.3f}" if metrics['preprocess_seqs'] != -1 else "-"
+        preprocess_seqs         = f"{metrics['preprocess_safety']:.3f}" if metrics['preprocess_safety'] != -1 else "-"
         
         solved_default_time     = (f"{metrics['solved_default']}" if metrics['solved_default'] != -1 else "-") + " (" + (f"{metrics['avg_time_default']:.3f}" if metrics['avg_time_default'] != -1 else "-")  + ")"
-        solved_sequences_time    = (f"{metrics['solved_safety']}"  if metrics['solved_safety'] != -1 else "-")  + " (" + (f"{metrics['avg_time_safety']:.3f}"  if metrics['avg_time_safety']  != -1 else "-")  + ")"
+        solved_sequences_time    = (f"{metrics['solved_safety']}" if metrics['solved_safety'] != -1 else "-")  + " (" + (f"{metrics['avg_time_safety']:.3f}"  if metrics['avg_time_safety']  != -1 else "-")  + ")"
 
-        fixed_sequences_to_1    = f"{metrics['fixed_seqs_=1']:.1f}" if metrics['fixed_seqs_=1'] != -1 else "-"
-        fixed_sequences_atleast = f"{metrics['fixed_seqs_>=1']:.1f}" if metrics['fixed_seqs_>=1'] != -1 else "-"
+        fixed_sequences_to_1    = f"{metrics['edge_variables=1']:.1f}"  if metrics['edge_variables=1'] != -1 else "-"
+        fixed_sequences_atleast = f"{metrics['edge_variables>=1']:.1f}" if metrics['edge_variables>=1'] != -1 else "-"
 
         speedup                 = f"{metrics['speedup']:.1f}" if metrics['speedup'] != -1 else "-"
 
-        nodes_info              = ((f"{int(metrics['nodes'])}") + " (" + f"{metrics['max_nodes']}" + ")" ) if metrics['nodes'] != -1 else "-"
-        edges_info              = ((f"{int(metrics['edges'])}") + " (" + f"{metrics['max_edges']}" + ")" ) if metrics['edges'] != -1 else "-"
+        nodes_info              = ((f"{int(metrics['avg_nodes'])}") + " (" + f"{metrics['max_nodes']}" + ")" ) if metrics['avg_nodes'] != -1 else "-"
+        edges_info              = ((f"{int(metrics['avg_edges'])}") + " (" + f"{metrics['max_edges']}" + ")" ) if metrics['avg_edges'] != -1 else "-"
 
-        SCC_info                = ((f"{int(metrics['avg_SCCs'])}") + " (" + f"{metrics['max_SCCs']}" + ")" ) if metrics['avg_SCCs'] != -1 else "-"
+        SCC_info                = ((f"{metrics['avg_SCCs']:.1f}") + " (" + f"{metrics['size_of_largest_SCC']}" + ")" ) if metrics['avg_SCCs'] != -1 else "-"
 
-        latex_code += f"& {width_range} & {metrics['graphs']} & {nodes_info} & {edges_info} & {preprocess_seqs} & {SCC_info} & {fixed_sequences_atleast} & {solved_default_time} & {solved_sequences_time} & {speedup} \\\\\n"
+        latex_code += f"& {width_range} & {metrics['graphs']} & {nodes_info} & {edges_info} & {SCC_info} & {preprocess_seqs} & {fixed_sequences_atleast} & {solved_default_time} & {solved_sequences_time} & {speedup} \\\\\n"
 
     #& & & & & & & & & & \\ \hline
     latex_code += r'''
@@ -234,3 +233,6 @@ def main():
     with open(data+".tex", "w") as f:
         f.write(latex_code)
 
+
+if __name__ == "__main__":
+    main()
