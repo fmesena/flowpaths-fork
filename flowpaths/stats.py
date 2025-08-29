@@ -98,11 +98,12 @@ def group_by_width(parsed_data):
                     group['solved_safety'] += 1
                     group['time_safety'].append(info['time_safety'])
 
-                group['preprocess_safety']         .append(info['preprocess_safety'])
-                group['edge_variables=1']          .append(info['edge_variables=1']/(w*m))
-                group['edge_variables>=1']         .append(info['edge_variables>=1']/(w*m))
-                group['number_of_nontrivial_SCCs'] .append(info['number_of_nontrivial_SCCs'])
-                group['size_of_largest_SCC']       .append(info['size_of_largest_SCC'])
+                    # Account for these statistics only if solved_safety is True
+                    group['preprocess_safety']         .append(info['preprocess_safety'])
+                    group['edge_variables=1']          .append(info['edge_variables=1']/(w*m))
+                    group['edge_variables>=1']         .append(info['edge_variables>=1']/(w*m))
+                    group['number_of_nontrivial_SCCs'] .append(info['number_of_nontrivial_SCCs'])
+                    group['size_of_largest_SCC']       .append(info['size_of_largest_SCC'])
 
                 if info['solved_default'] and info['solved_safety']:
                     assert(info['time_default'] > 0 and info['time_safety'] > 0)

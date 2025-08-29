@@ -1,5 +1,6 @@
 from itertools import count
 import networkx as nx
+import flowpaths as fp
 import flowpaths.utils as utils
 
 bigNumber = 1 << 32
@@ -127,10 +128,11 @@ def read_graph(graph_raw) -> nx.DiGraph:
                 utils.logger.error(f"{__name__}: Constraint edge ({u}, {v}) not found in graph {graph_id} edges.")
                 raise ValueError(f"Constraint edge ({u}, {v}) not found in graph edges.")
     
-    G.graph["n"]  = n
-    G.graph["m"]  = m
-    G.graph["w"]  = min_cost_flow(G)[0]
-    
+    stDiGraph = fp.stDiGraph(G)
+    G.graph["n"] = n
+    G.graph["m"] = m
+    G.graph["w"] = stDiGraph.get_width()
+
     return G
 
 

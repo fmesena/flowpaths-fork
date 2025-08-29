@@ -30,7 +30,7 @@ def test_min_flow_decomp(filename: str):
         },
         solver_options={
             "external_solver": "gurobi", # we can try also "highs" at some point
-            "time_limit": TIME_LIMIT, # 300s = 5min
+            "time_limit": TIME_LIMIT,
         },
     )
     mfd_model.solve()
@@ -38,12 +38,11 @@ def test_min_flow_decomp(filename: str):
 
     if mfd_model.is_solved():
         assert(mfd_model.is_valid_solution()) # Keep this to verify the solution
-        solved_by_default = True
+        out.write(f"time_default: {statistics['solve_time']}\n")
     else:
         print("Model could not be solved.")
 
-    out.write(f"solved_default: {solved_by_default}\n")
-    out.write(f"time_default: {statistics['solve_time'] if solved_by_default else 0}\n")
+    out.write(f"solved_default: {mfd_model.is_solved()}\n")
 
     #SAFETY
     mfd_model = fp.MinFlowDecompCycles(
@@ -57,7 +56,7 @@ def test_min_flow_decomp(filename: str):
         },
         solver_options={
             "external_solver": "gurobi", # we can try also "highs" at some point
-            "time_limit": TIME_LIMIT, # 300s = 5min
+            "time_limit": TIME_LIMIT,
         },
     )
     mfd_model.solve()
@@ -65,17 +64,16 @@ def test_min_flow_decomp(filename: str):
 
     if mfd_model.is_solved():
         assert(mfd_model.is_valid_solution()) # Keep this to verify the solution
-        solved_by_safety = True
-        out.write(f"edge_variables=1: {statistics['edge_variables=1']}\n")
-        out.write(f"edge_variables>=1: {statistics['edge_variables>=1']}\n")
-        out.write(f"preprocess_safety: {statistics.get('safe_sequences_time',0)}\n")
+        out.write(f"time_safety:               {statistics['solve_time']}\n")
+        out.write(f"edge_variables=1:          {statistics['edge_variables=1']}\n")
+        out.write(f"edge_variables>=1:         {statistics['edge_variables>=1']}\n")
+        out.write(f"preprocess_safety:         {statistics.get('safe_sequences_time',0)}\n")
         out.write(f"number_of_nontrivial_SCCs: {statistics['number_of_nontrivial_SCCs']}\n")
-        out.write(f"size_of_largest_SCC: {statistics['size_of_largest_SCC']}\n")
+        out.write(f"size_of_largest_SCC:       {statistics['size_of_largest_SCC']}\n")
     else:
         print("Model could not be solved.")
 
-    out.write(f"solved_safety: {solved_by_safety}\n")
-    out.write(f"time_safety: {statistics['solve_time'] if solved_by_safety else 0}\n")
+    out.write(f"solved_safety: {mfd_model.is_solved()}\n")
 
     out.close()
 
