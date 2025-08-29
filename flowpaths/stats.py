@@ -2,7 +2,7 @@ import flowpaths as fp
 from collections import defaultdict
 import re
 
-TIME_LIMIT = 3
+TIME_LIMIT = 30
 data  = "graphs-g5-w5000-k27-cyc_out.txt"
 data2 = "graphs-g5-w5000-k27-cyc-e0.75_out.txt"
 

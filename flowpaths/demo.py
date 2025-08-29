@@ -2,7 +2,7 @@ import flowpaths as fp
 import os
 from datetime import datetime
 
-TIME_LIMIT   = 3
+TIME_LIMIT   = 30
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
 dt_time      = current_time.strftime("%H-%M")
