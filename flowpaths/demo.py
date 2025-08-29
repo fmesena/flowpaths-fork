@@ -7,6 +7,8 @@ current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
 dt_time      = current_time.strftime("%H-%M")
 test_dir     = "../../create-flow-graphs/"
+dataset     = "graphs-g5-w5000-k27-cyc"       #EXACT MFD 
+dataset_075 = "graphs-g5-w5000-k27-cyc-e0.75" #ABS-ERRORS AND MINPATH-ERROR
 
 
 def test_min_flow_decomp(filename: str):
@@ -14,7 +16,7 @@ def test_min_flow_decomp(filename: str):
     print("graph id", graph.graph["id"])
     # print("subset_constraints", graph.graph["constraints"])
 
-    out = open(filename + "_out_{}_{}.txt".format(dt_day, dt_time), "a")
+    out = open(dataset + "_out_{}_{}.txt".format(dt_day, dt_time), "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
@@ -83,13 +85,10 @@ def test_min_flow_decomp(filename: str):
 
 def main():
 
-    dataset     = test_dir + "graphs-g5-w5000-k27-cyc"       #EXACT MFD 
-    dataset_075 = test_dir + "graphs-g5-w5000-k27-cyc-e0.75" #ABS-ERRORS AND MINPATH-ERROR
-
-    for entry in os.listdir(dataset):
+    for entry in os.listdir(test_dir+dataset):
         
         if entry.endswith(".graph"):
-            file = os.path.join(dataset, entry)
+            file = os.path.join(test_dir+dataset, entry)
 
             test_min_flow_decomp(filename = file)
             #test_least_abs_errors(filename = dataset_folder_075, stats = stats)
