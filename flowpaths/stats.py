@@ -1,10 +1,8 @@
 from collections import defaultdict
 import re
+import argparse
 
 TIME_LIMIT = 300
-#data  = "graphs-g5-w5000-k27-cyc_out.txt"
-#data2 = "graphs-g5-w5000-k27-cyc-e0.75_out.txt"
-data = "graphs-g5-w5000-k27-cyc_out_29-08_13-56.txt"
 
 width_ranges = {
     "1-3": (1, 3),
@@ -224,7 +222,7 @@ def generate_table(results):
 
 
 
-def main():
+def main(data):
 
     parsed_data  = parse_input_file(data)
     grouped_data = group_by_width(parsed_data)
@@ -235,4 +233,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    
+    parser = argparse.ArgumentParser(description='Process inputs.')
+    parser.add_argument('-i', '--input', required=True, help='Input file path')
+    args = parser.parse_args()
+
+    main(data=args.input)

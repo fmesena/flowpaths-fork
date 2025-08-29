@@ -2,6 +2,7 @@ import flowpaths as fp
 import os
 from datetime import datetime
 import argparse
+import stats
 
 test_dir     = "../../create-flow-graphs/"
 SOLVER       = "gurobi"   # "highs"
@@ -10,7 +11,8 @@ EDGE_FILTER  = 25
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
 dt_time      = current_time.strftime("%H-%M")
-dataset      = "graphs-g5-w5000-k27-cyc" 
+dataset      = "graphs-g5-w5000-k27-cyc"
+output_file  = None
 
 # PERFECT:
 # "graphs-g5-w5000-k27-cyc"
@@ -28,7 +30,9 @@ dataset      = "graphs-g5-w5000-k27-cyc"
 def test_min_flow_decomp(filename: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    out = open(dataset + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time), "a")
+    output_file = dataset + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)
+    
+    out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
@@ -78,7 +82,9 @@ def test_least_abs_errors(filename):
     graph = fp.graphutils.read_graphs(filename)[0]
     print("graph id", graph.graph["id"])
 
-    out = open(dataset + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time), "a")
+    output_file = dataset + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)
+
+    out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
@@ -128,7 +134,9 @@ def test_min_path_error(filename):
     graph = fp.graphutils.read_graphs(filename)[0]
     print("graph id", graph.graph["id"])
 
-    out = open(dataset + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time), "a")
+    output_file = dataset + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)
+
+    out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
@@ -188,7 +196,7 @@ def write_stats_to_file(model, file):
     return
 
 
-def main(mode):
+def main(mode, generate_stats):
     fn = None
 
     match mode:
@@ -207,6 +215,9 @@ def main(mode):
             file = os.path.join(test_dir+dataset, entry)
             fn(filename = file)
 
+    if generate_stats:
+        stats.main(output_file)
+
 
 if __name__ == "__main__":
 
@@ -218,12 +229,13 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Process inputs.')
 
-    parser.add_argument('-i', '--input'  , required=False, help='Input file path')
-    parser.add_argument('-m', '--mode'   , required=True, choices=['0','1','2'] , help='Execution mode') # 0 MFD; 1 ABS; 2 MIN
-    
+    parser.add_argument('-i', '--input', required=False     , help='Input file path')
+    parser.add_argument('-m', '--mode' , required=True      , choices=['0','1','2'] , help='Execution mode') # 0 MFD; 1 ABS; 2 MIN
+    parser.add_argument('-s', '--stats', action="store_true", help='Generate statistics')
+
     args = parser.parse_args()
 
     if args.input is not None:
         dataset = args.input
 
-    main(mode = args.mode)
+    main(mode = args.mode, generate_stats=args.stats)
