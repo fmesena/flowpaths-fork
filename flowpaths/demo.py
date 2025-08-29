@@ -62,20 +62,6 @@ def test_min_flow_decomp(filename: str):
     out.close()
 
 
-def write_stats_to_file(model, file):
-    if model.is_solved():
-        assert(model.is_valid_solution()) # Keep this to verify the solution
-        statistics = model.solve_statistics
-        file.write(f"edge_variables=1:          {statistics['edge_variables=1']}\n")
-        file.write(f"edge_variables>=1:         {statistics['edge_variables>=1']}\n")
-        file.write(f"preprocess_safety:         {statistics.get('safe_sequences_time', 0)}\n")
-        file.write(f"number_of_nontrivial_SCCs: {statistics['number_of_nontrivial_SCCs']}\n")
-        file.write(f"size_of_largest_SCC:       {statistics['size_of_largest_SCC']}\n")
-    file.write(f"solved_safety:                 {model.is_solved()}\n")
-    file.write(f"time_safety:                   {statistics['solve_time'] if model.is_solved() else 0}\n")
-    return
-
-
 def test_least_abs_errors(filename):
     graph = fp.graphutils.read_graphs(filename)[0]
     print("graph id", graph.graph["id"])
@@ -124,7 +110,6 @@ def test_least_abs_errors(filename):
     )
     klae_percentile_model.solve()
     write_stats_to_file(klae_percentile_model, out)
-
 
 
 def test_min_path_error(filename):
@@ -176,6 +161,19 @@ def test_min_path_error(filename):
     kmpe_percentile_model.solve()
     write_stats_to_file(kmpe_percentile_model)
 
+
+def write_stats_to_file(model, file):
+    if model.is_solved():
+        assert(model.is_valid_solution()) # Keep this to verify the solution
+        statistics = model.solve_statistics
+        file.write(f"edge_variables=1:          {statistics['edge_variables=1']}\n")
+        file.write(f"edge_variables>=1:         {statistics['edge_variables>=1']}\n")
+        file.write(f"preprocess_safety:         {statistics.get('safe_sequences_time', 0)}\n")
+        file.write(f"number_of_nontrivial_SCCs: {statistics['number_of_nontrivial_SCCs']}\n")
+        file.write(f"size_of_largest_SCC:       {statistics['size_of_largest_SCC']}\n")
+    file.write(f"solved_safety:                 {model.is_solved()}\n")
+    file.write(f"time_safety:                   {statistics['solve_time'] if model.is_solved() else 0}\n")
+    return
 
 
 def main():
