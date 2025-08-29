@@ -159,7 +159,7 @@ def test_min_path_error(filename):
         trusted_edges_for_safety_percentile=EDGE_FILTER, # remove this if not using the safety optimization
     )
     kmpe_percentile_model.solve()
-    write_stats_to_file(kmpe_percentile_model)
+    write_stats_to_file(kmpe_percentile_model, out)
 
 
 def write_stats_to_file(model, file):
