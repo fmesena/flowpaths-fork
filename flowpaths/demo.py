@@ -28,14 +28,14 @@ output_file  = None
 
 
 def test_min_flow_decomp(filename: str):
+    global output_file
     graph = fp.graphutils.read_graphs(filename)[0]
 
     output_file = dataset + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)
-    
-    out = open(output_file, "a")
+
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
-
+    print(graph)
     #Vanilla
     mfd_model = fp.MinFlowDecompCycles(
         G=graph,
@@ -52,6 +52,7 @@ def test_min_flow_decomp(filename: str):
         },
     )
     mfd_model.solve()
+    print(mfd_model.is_solved())
     if mfd_model.is_solved():
         assert(mfd_model.is_valid_solution()) # Keep this to verify the solution
     out.write(f"solved_default: {mfd_model.is_solved()}\n")

@@ -22,13 +22,14 @@ def test_min_flow_decomp(filename: str):
         G=graph,
         flow_attr="flow",
         weight_type=int,
-        subset_constraints=graph.graph["constraints"], # try with and without
+        #subset_constraints=graph.graph["constraints"], # try with and without
+	subset_constraints=[],
         optimization_options={
-            "optimize_with_safe_sequences": True, # set to false to deactivate the safe sequences optimization
+            "optimize_with_safe_sequences": False, # set to false to deactivate the safe sequences optimization
         },
         solver_options={
             "external_solver": "gurobi", # we can try also "highs" at some point
-            "time_limit": 300, # 300s = 5min, is it ok?
+            "time_limit": 1, # 300s = 5min, is it ok?
         },
     )
     mfd_model.solve()
@@ -139,7 +140,7 @@ def process_solution(model):
     print("size_of_largest_SCC:", solve_statistics['size_of_largest_SCC']) # size = number of edges
 
 def main():
-    test_min_flow_decomp(filename = "tests/cyclic_graphs/gt5.kmer27.(655000.660000).V18.E27.mincyc4.graph")
+    test_min_flow_decomp(filename = "tests/cyclic_graphs/gt5.kmer27.(410000.415000).V24.E37.mincyc11.graph")
     test_least_abs_errors(filename = "tests/cyclic_graphs/gt5.kmer27.(655000.660000).V18.E27.mincyc4.e0.75.graph")
     test_min_path_error(filename = "tests/cyclic_graphs/gt5.kmer27.(655000.660000).V18.E27.mincyc4.e0.75.graph")
 

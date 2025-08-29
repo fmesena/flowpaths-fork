@@ -2,7 +2,7 @@ from collections import defaultdict
 import re
 import argparse
 
-TIME_LIMIT = 300
+TIME_LIMIT = 3
 
 width_ranges = {
     "1-3": (1, 3),
@@ -16,7 +16,7 @@ width_ranges = {
 def parse_input_file(filename):
     data = defaultdict(list)
     current_graph = None
-
+    print(filename)
     with open(filename, 'r') as file:
         for line in file:
             line = line.strip()
