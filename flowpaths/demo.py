@@ -1,22 +1,34 @@
 import flowpaths as fp
 import os
 from datetime import datetime
+import argparse
 
-SOLVER = "gurobi"   # "highs"
+test_dir     = "../../create-flow-graphs/"
+SOLVER       = "gurobi"   # "highs"
 TIME_LIMIT   = 30
 EDGE_FILTER  = 25
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
 dt_time      = current_time.strftime("%H-%M")
-test_dir     = "../../create-flow-graphs/"
-dataset     = "graphs-g5-w5000-k27-cyc"       #EXACT MFD 
-dataset_075 = "graphs-g5-w5000-k27-cyc-e0.75" #ABS-ERRORS AND MINPATH-ERROR
+dataset      = "graphs-g5-w5000-k27-cyc" 
+
+# PERFECT:
+# "graphs-g5-w5000-k27-cyc"
+# "graphs-g5-w10000-k27-cyc"  (still 5 genomes, with genome windows of 10000 bases)
+# "graphs-g5-w50000-k27-cyc"  (still 5 genomes, with genome windows of 50000 bases)
+# "graphs-g10-w10000-k27-cyc" (10 genomes, with genome windows of 10000 bases)
+# "graphs-g10-w50000-k27-cyc" (10 genomes, with genome windows of 50000 bases)
+# "graphs-labmix-k27-cyc"     (perfect weights)
+
+# IMPERFECT:
+# "graphs-g5-w5000-k27-cyc-e0.75"
+# "graphs-labmix-k27-cyc-e0.75"
 
 
 def test_min_flow_decomp(filename: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    out = open(dataset + "_" + SOLVER + "_{}_{}.txt".format(dt_day, dt_time), "a")
+    out = open(dataset + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time), "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
@@ -66,7 +78,7 @@ def test_least_abs_errors(filename):
     graph = fp.graphutils.read_graphs(filename)[0]
     print("graph id", graph.graph["id"])
 
-    out = open(dataset_075 + "_" + SOLVER + "_abs_{}_{}.txt".format(dt_day, dt_time), "a")
+    out = open(dataset + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time), "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
@@ -116,7 +128,7 @@ def test_min_path_error(filename):
     graph = fp.graphutils.read_graphs(filename)[0]
     print("graph id", graph.graph["id"])
 
-    out = open(dataset_075 + "_" + SOLVER + "_min_{}_{}.txt".format(dt_day, dt_time), "a")
+    out = open(dataset + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time), "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
 
@@ -176,28 +188,42 @@ def write_stats_to_file(model, file):
     return
 
 
-def main():
+def main(mode):
+    fn = None
+
+    match mode:
+        case '0':
+            fn = test_min_flow_decomp
+        case '1':
+            fn = test_least_abs_errors
+        case '2':
+            fn = test_min_path_error
+
+    assert(fn is not None)
 
     for entry in os.listdir(test_dir+dataset):
         
         if entry.endswith(".graph"):
             file = os.path.join(test_dir+dataset, entry)
-
-            test_min_flow_decomp(filename = file)
-
-    for entry in os.listdir(test_dir+dataset_075):
-        
-        if entry.endswith(".graph"):
-            file = os.path.join(test_dir+dataset_075, entry)
-            
-            test_least_abs_errors(filename = file)
-            test_min_path_error(filename = file)
+            fn(filename = file)
 
 
 if __name__ == "__main__":
+
     # Configure logging
     fp.utils.configure_logging(
         level=fp.utils.logging.INFO,
         log_to_console=True,
     )
-    main()
+    
+    parser = argparse.ArgumentParser(description='Process inputs.')
+
+    parser.add_argument('-i', '--input'  , required=False, help='Input file path')
+    parser.add_argument('-m', '--mode'   , required=True, choices=['0','1','2'] , help='Execution mode') # 0 MFD; 1 ABS; 2 MIN
+    
+    args = parser.parse_args()
+
+    if args.input is not None:
+        dataset = args.input
+
+    main(mode = args.mode)
