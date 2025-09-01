@@ -2,15 +2,7 @@ from collections import defaultdict
 import re
 import argparse
 
-TIME_LIMIT = 60
-
-width_ranges = {
-    "1-3": (1, 3),
-    "4-6": (4, 6),
-    "7-9": (7, 9),
-    "10-15": (10, 15),
-    "16+": (16, 10000)
-}
+TIME_LIMIT = 200
 
 
 def parse_input_file(filename):

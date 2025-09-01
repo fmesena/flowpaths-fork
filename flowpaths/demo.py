@@ -4,9 +4,9 @@ from datetime import datetime
 import argparse
 import stats
 
-test_dir     = "../../flow-datasets/cyclic-graphs"
+test_dir     = "../../flow-datasets/cyclic-graphs/"
 SOLVER       = "gurobi"   # "highs"
-TIME_LIMIT   = 60
+TIME_LIMIT   = 200
 EDGE_FILTER  = 25
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
@@ -26,10 +26,9 @@ dt_time      = current_time.strftime("%H-%M")
 
 
 def test_min_flow_decomp(filename: str, dataset_name: str):
-    global output_file
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = dataset_name + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)
+    output_file = (dataset_name + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)).replace("\\", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -79,10 +78,9 @@ def test_min_flow_decomp(filename: str, dataset_name: str):
 
 
 def test_least_abs_errors(filename: str, dataset_name: str):
-    global output_file
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = dataset_name + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)
+    output_file = (dataset_name + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)).replace("\\", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -131,10 +129,9 @@ def test_least_abs_errors(filename: str, dataset_name: str):
 
 
 def test_min_path_error(filename: str, dataset_name: str):
-    global output_file
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = dataset_name + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)
+    output_file = (dataset_name + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)).replace("\\", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -215,8 +212,8 @@ def main(mode, dataset, generate_stats):
             file = os.path.join(test_dir+dataset, entry)
             fn(filename = file, dataset_name=dataset)
 
-    if generate_stats:
-        stats.main(output_file)
+    #if generate_stats:
+    #    stats.main(output_file)
 
 
 if __name__ == "__main__":
