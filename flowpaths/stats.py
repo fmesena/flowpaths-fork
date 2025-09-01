@@ -2,7 +2,11 @@ from collections import defaultdict
 import re
 import argparse
 
+<<<<<<< HEAD
 TIME_LIMIT = 5
+=======
+TIME_LIMIT = 60
+>>>>>>> d955d1cf52dade00d52c9679f610bdc7cdceb33c
 
 width_ranges = {
     "1-3": (1, 3),
@@ -110,7 +114,7 @@ def group_by_width(parsed_data):
                     group['speedup'].append(TIME_LIMIT / info['time_safety'])
                 if info['solved_default'] and not info['solved_safety']:
                     assert(info['time_default'] > 0)
-                    print("ahah!",graph.graph["id"])
+                    print("ahah!")
                     group['speedup'].append(info['time_default'] / (TIME_LIMIT + info['time_default']))
 
     return grouped_data
