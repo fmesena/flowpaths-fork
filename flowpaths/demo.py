@@ -11,8 +11,6 @@ EDGE_FILTER  = 25
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
 dt_time      = current_time.strftime("%H-%M")
-dataset      = "graphs-g5-w5000-k27-cyc"
-output_file  = None
 
 # PERFECT:
 # "graphs-g5-w5000-k27-cyc"
@@ -27,11 +25,11 @@ output_file  = None
 # "graphs-labmix-k27-cyc-e0.75"
 
 
-def test_min_flow_decomp(filename: str):
+def test_min_flow_decomp(filename: str, dataset_name: str):
     global output_file
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = dataset + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)
+    output_file = dataset_name + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -80,11 +78,11 @@ def test_min_flow_decomp(filename: str):
     out.close()
 
 
-def test_least_abs_errors(filename):
+def test_least_abs_errors(filename: str, dataset_name: str):
+    global output_file
     graph = fp.graphutils.read_graphs(filename)[0]
-    print("graph id", graph.graph["id"])
 
-    output_file = dataset + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)
+    output_file = dataset_name + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -132,11 +130,11 @@ def test_least_abs_errors(filename):
     write_stats_to_file(klae_percentile_model, out)
 
 
-def test_min_path_error(filename):
+def test_min_path_error(filename: str, dataset_name: str):
+    global output_file
     graph = fp.graphutils.read_graphs(filename)[0]
-    print("graph id", graph.graph["id"])
 
-    output_file = dataset + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)
+    output_file = dataset_name + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -198,7 +196,7 @@ def write_stats_to_file(model, file):
     return
 
 
-def main(mode, generate_stats):
+def main(mode, dataset, generate_stats):
     fn = None
 
     match mode:
@@ -215,7 +213,7 @@ def main(mode, generate_stats):
         
         if entry.endswith(".graph"):
             file = os.path.join(test_dir+dataset, entry)
-            fn(filename = file)
+            fn(filename = file, dataset_name=dataset)
 
     if generate_stats:
         stats.main(output_file)
@@ -231,13 +229,10 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Process inputs.')
 
-    parser.add_argument('-i', '--input', required=False     , help='Input file path')
+    parser.add_argument('-i', '--input', required=True     , help='Input file path')
     parser.add_argument('-m', '--mode' , required=True      , choices=['0','1','2'] , help='Execution mode') # 0 MFD; 1 ABS; 2 MIN
     parser.add_argument('-s', '--stats', action="store_true", help='Generate statistics')
 
     args = parser.parse_args()
 
-    if args.input is not None:
-        dataset = args.input
-
-    main(mode = args.mode, generate_stats=args.stats)
+    main(mode=args.mode, dataset=args.input, generate_stats=args.stats)
