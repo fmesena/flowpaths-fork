@@ -2,11 +2,7 @@ from collections import defaultdict
 import re
 import argparse
 
-<<<<<<< HEAD
-TIME_LIMIT = 5
-=======
 TIME_LIMIT = 60
->>>>>>> d955d1cf52dade00d52c9679f610bdc7cdceb33c
 
 width_ranges = {
     "1-3": (1, 3),
