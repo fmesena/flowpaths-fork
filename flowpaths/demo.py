@@ -4,7 +4,7 @@ from datetime import datetime
 import argparse
 import stats
 
-test_dir     = "../../create-flow-graphs/"
+test_dir     = "../../flow-datasets/cyclic-graphs"
 SOLVER       = "gurobi"   # "highs"
 TIME_LIMIT   = 60
 EDGE_FILTER  = 25
