@@ -6,7 +6,7 @@ import stats
 
 test_dir     = "../../create-flow-graphs/"
 SOLVER       = "gurobi"   # "highs"
-TIME_LIMIT   = 300
+TIME_LIMIT   = 5
 EDGE_FILTER  = 25
 current_time = datetime.now()
 dt_day       = current_time.strftime("%d-%m")
