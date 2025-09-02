@@ -28,12 +28,12 @@ dt_time      = current_time.strftime("%H-%M")
 def test_min_flow_decomp(filename: str, dataset_name: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = (dataset_name + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
+    output_file = (dataset_name + "_" + SOLVER + "_" + str(TIME_LIMIT) + "_MFD_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
     out.write(f"{graph.graph['n']},{graph.graph['m']},{graph.graph['w']}\n")
-    print(graph)
+
     #Vanilla
     mfd_model = fp.MinFlowDecompCycles(
         G=graph,
@@ -50,10 +50,9 @@ def test_min_flow_decomp(filename: str, dataset_name: str):
         },
     )
     mfd_model.solve()
-    print(mfd_model.is_solved())
     if mfd_model.is_solved():
         assert(mfd_model.is_valid_solution()) # Keep this to verify the solution
-    out.write(f"solved_default: {mfd_model.is_solved()}\n")
+    out.write(f"solved_default: {str(True) if mfd_model.is_solved() else str(False)}\n")
     out.write(f"time_default:   {mfd_model.solve_statistics['solve_time'] if mfd_model.is_solved() else 0}\n")
 
     #SAFETY
@@ -80,7 +79,7 @@ def test_min_flow_decomp(filename: str, dataset_name: str):
 def test_least_abs_errors(filename: str, dataset_name: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = (dataset_name + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
+    output_file = (dataset_name + "_" + SOLVER + "_" + str(TIME_LIMIT) + "_ABS_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -105,7 +104,7 @@ def test_least_abs_errors(filename: str, dataset_name: str):
     klae_model.solve()
     if klae_model.is_solved():
         assert(klae_model.is_valid_solution()) # Keep this to verify the solution
-    out.write(f"solved_default: {klae_model.is_solved()}\n")
+    out.write(f"solved_default: {str(True) if klae_model.is_solved() else str(False)}\n")
     out.write(f"time_default:   {klae_model.solve_statistics['solve_time'] if klae_model.is_solved() else 0}\n")
 
     # here we also pass the percentile
@@ -131,7 +130,7 @@ def test_least_abs_errors(filename: str, dataset_name: str):
 def test_min_path_error(filename: str, dataset_name: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = (dataset_name + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
+    output_file = (dataset_name + "_" + SOLVER + "_" + str(TIME_LIMIT) + "_MIN_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -155,7 +154,7 @@ def test_min_path_error(filename: str, dataset_name: str):
     kmpe_model.solve()
     if kmpe_model.is_solved():
         assert(kmpe_model.is_valid_solution()) # Keep this to verify the solution
-    out.write(f"solved_default: {kmpe_model.is_solved()}\n")
+    out.write(f"solved_default: {str(True) if kmpe_model.is_solved() else str(False)}\n")
     out.write(f"time_default:   {kmpe_model.solve_statistics['solve_time'] if kmpe_model.is_solved() else 0}\n")
 
 
