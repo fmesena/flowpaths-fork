@@ -165,7 +165,7 @@ def test_min_path_error(input_file: str, output_file: str):
 
 def write_stats_to_file(model, file):
     solved = model.is_solved()
-    file.write(f"solved_safety:             {solved}\n")
+    file.write(f"solved_safety:             {str(True) if solved else str(False)}\n")
 
     if solved:
         assert(model.is_valid_solution()) # Keep this to verify the solution
@@ -178,6 +178,15 @@ def write_stats_to_file(model, file):
         file.write(f"size_of_largest_SCC:       {statistics['size_of_largest_SCC']}\n")
     else:
         file.write("time_safety:                0\n")
+    
+    '''
+    if mfd_model.is_solved():
+        assert(mfd_model.is_valid_solution())
+    out.write(f"solved_default:            {str(True) if mfd_model.is_solved() else str(False)}\n")
+    out.write(f"time_default:              {mfd_model.solve_statistics['solve_time'] if mfd_model.is_solved() else 0}\n")
+
+    '''
+    
     return
 
 
