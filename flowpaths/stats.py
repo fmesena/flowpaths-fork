@@ -10,7 +10,6 @@ def parse_input_file(filename: str) -> dict:
     with open(filename, 'r') as file:
         for line in file:
             line = line.strip()
-            #print(line)
             if line.startswith('#Graph'):
                 current_graph = str(line.split()[1])
 

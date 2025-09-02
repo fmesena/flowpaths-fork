@@ -167,7 +167,7 @@ def write_stats_to_file(model, file):
     solved = model.is_solved()
     file.write(f"solved_safety:             {solved}\n")
 
-    if solved():
+    if solved:
         assert(model.is_valid_solution()) # Keep this to verify the solution
         statistics = model.solve_statistics
         file.write(f"time_safety:               {statistics['solve_time']}\n")
