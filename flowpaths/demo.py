@@ -28,7 +28,7 @@ dt_time      = current_time.strftime("%H-%M")
 def test_min_flow_decomp(filename: str, dataset_name: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = (dataset_name + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)).replace("\\", "-")
+    output_file = (dataset_name + "_" + SOLVER + "_MFD_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -80,7 +80,7 @@ def test_min_flow_decomp(filename: str, dataset_name: str):
 def test_least_abs_errors(filename: str, dataset_name: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = (dataset_name + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)).replace("\\", "-")
+    output_file = (dataset_name + "_" + SOLVER + "_ABS_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
@@ -131,7 +131,7 @@ def test_least_abs_errors(filename: str, dataset_name: str):
 def test_min_path_error(filename: str, dataset_name: str):
     graph = fp.graphutils.read_graphs(filename)[0]
 
-    output_file = (dataset_name + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)).replace("\\", "-")
+    output_file = (dataset_name + "_" + SOLVER + "_MIN_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
 
     out = open(output_file, "a")
     out.write(f"#Graph {graph.graph['id']}\n")
