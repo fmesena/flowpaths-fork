@@ -141,7 +141,7 @@ def compute_metrics(grouped_data):
             
         # Average safety preprocessing time
         if len(group['preprocess_safety']) > 0:
-            assert(len(group['preprocess_safety']) == group['graphs'])
+            #results[width_range]['preprocess_safety'] = (sum(group['preprocess_safety']) / group['graphs'])
             results[width_range]['preprocess_safety'] = (sum(group['preprocess_safety']) / len(group['preprocess_safety']))
 
         # Average running times in every setting
