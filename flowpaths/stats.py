@@ -166,9 +166,9 @@ def compute_metrics(grouped_data):
     return results
 
 
-def generate_table(results):
+def generate_table(results, filename):
     latex_code = r'''\begin{table}[]
-                    \caption{A table. vars shows the percentage of edge variables set to 1 or more.}
+                    \caption{A table about %s. vars shows the percentage of edge variables set to 1 or more.}
                     \begin{center}
                     \begin{tabular}{|r|r|r|r|r|r|r|r|r|r|r|}
                     \hline
@@ -181,10 +181,10 @@ def generate_table(results):
                     & \multirow{2}{*}{\shortstack{vars \\ (\%)}} 
                     & \multicolumn{2}{c|}{\#solved (avg time (s))} 
                     & \multirow{2}{*}{$\times$} \\ \cline{9-10}
-                    
+
                     & & & & & & & & no safety & safety & \\ \hline
-                    
-                    \multirow{3}{*}{\rotatebox{90}{\shortstack{\textbf{Dataset}\\\textbf{name}}}}'''
+
+                    \multirow{3}{*}{\rotatebox{90}{\shortstack{\textbf{Dataset}\\\textbf{name}}}}''' % filename
 
     for width_range, metrics in results.items():
         preprocess_seqs         = f"{metrics['preprocess_safety']:.3f}" if metrics['preprocess_safety'] != -1 else "-"
@@ -214,13 +214,13 @@ def generate_table(results):
 
 
 
-def main(data):
+def main(filename):
 
-    parsed_data  = parse_input_file(data)
+    parsed_data  = parse_input_file(filename)
     grouped_data = group_by_width(parsed_data)
     results      = compute_metrics(grouped_data)
-    latex_code   = generate_table(results)
-    with open(data+".tex", "w") as f:
+    latex_code   = generate_table(results,filename)
+    with open(filename+".tex", "w") as f:
         f.write(latex_code)
 
 
@@ -230,4 +230,4 @@ if __name__ == "__main__":
     parser.add_argument('-i', '--input', required=True, help='Input file path')
     args = parser.parse_args()
 
-    main(data=args.input)
+    main(filename=args.input)
