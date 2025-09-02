@@ -2,13 +2,11 @@ from collections import defaultdict
 import re
 import argparse
 
-TIME_LIMIT = 200
 
-
-def parse_input_file(filename):
+def parse_input_file(filename: str) -> dict:
     data = defaultdict(list)
     current_graph = None
-    print(filename)
+
     with open(filename, 'r') as file:
         for line in file:
             line = line.strip()
@@ -42,11 +40,10 @@ def parse_input_file(filename):
 
                     if key in data[current_graph]:
                         data[current_graph][key] = value
-    #print(data)
     return data
 
 
-def group_by_width(parsed_data):
+def group_by_width(parsed_data: dict, tlimit: int) -> dict:
 
     width_ranges = {
         "1-3": (1, 3),
@@ -99,11 +96,11 @@ def group_by_width(parsed_data):
                     group['speedup'].append(info['time_default'] / info['time_safety'])
                 if not info['solved_default'] and info['solved_safety']:
                     assert(info['time_safety'] > 0)
-                    group['speedup'].append(TIME_LIMIT / info['time_safety'])
+                    group['speedup'].append(tlimit / info['time_safety'])
                 if info['solved_default'] and not info['solved_safety']:
                     assert(info['time_default'] > 0)
                     print("ahah!")
-                    group['speedup'].append(info['time_default'] / (TIME_LIMIT + info['time_default']))
+                    group['speedup'].append(info['time_default'] / (tlimit + info['time_default']))
 
     return grouped_data
 
@@ -213,21 +210,22 @@ def generate_table(results, filename):
     return latex_code
 
 
-
-def main(filename):
+def main(filename, tlimit):
 
     parsed_data  = parse_input_file(filename)
-    grouped_data = group_by_width(parsed_data)
+    grouped_data = group_by_width(parsed_data, tlimit)
     results      = compute_metrics(grouped_data)
-    latex_code   = generate_table(results,filename)
+    latex_code   = generate_table(results,filename.replace("_", r"\_")) # to escape "_" in latex
     with open(filename+".tex", "w") as f:
         f.write(latex_code)
 
 
 if __name__ == "__main__":
-    
+
     parser = argparse.ArgumentParser(description='Process inputs.')
-    parser.add_argument('-i', '--input', required=True, help='Input file path')
+    parser.add_argument('-i', '--input' , required=True, help='Input file path')
+    parser.add_argument('-t', '--tlimit', type=int, default=300, help='Time limit in seconds for the solver')
+
     args = parser.parse_args()
 
-    main(filename=args.input)
+    main(filename=args.input, tlimit=args.tlimit)
