@@ -41,8 +41,8 @@ def test_min_flow_decomp(input_file: str, output_file: str):
     mfd_model.solve()
     if mfd_model.is_solved():
         assert(mfd_model.is_valid_solution())
-    out.write(f"solved_default:             {str(True) if mfd_model.is_solved() else str(False)}\n")
-    out.write(f"time_default:               {mfd_model.solve_statistics['solve_time'] if mfd_model.is_solved() else 0}\n")
+    out.write(f"solved_default:            {str(True) if mfd_model.is_solved() else str(False)}\n")
+    out.write(f"time_default:              {mfd_model.solve_statistics['solve_time'] if mfd_model.is_solved() else 0}\n")
 
     #SAFETY
     mfd_model = fp.MinFlowDecompCycles(
@@ -91,8 +91,8 @@ def test_least_abs_errors(input_file: str, output_file: str):
     klae_model.solve()
     if klae_model.is_solved():
         assert(klae_model.is_valid_solution())
-    out.write(f"solved_default:             {str(True) if klae_model.is_solved() else str(False)}\n")
-    out.write(f"time_default:               {klae_model.solve_statistics['solve_time'] if klae_model.is_solved() else 0}\n")
+    out.write(f"solved_default:            {str(True) if klae_model.is_solved() else str(False)}\n")
+    out.write(f"time_default:              {klae_model.solve_statistics['solve_time'] if klae_model.is_solved() else 0}\n")
 
     # here we also pass the percentile
     klae_percentile_model = fp.kLeastAbsErrorsCycles(
@@ -139,8 +139,8 @@ def test_min_path_error(input_file: str, output_file: str):
     kmpe_model.solve()
     if kmpe_model.is_solved():
         assert(kmpe_model.is_valid_solution())
-    out.write(f"solved_default:             {str(True) if kmpe_model.is_solved() else str(False)}\n")
-    out.write(f"time_default:               {kmpe_model.solve_statistics['solve_time'] if kmpe_model.is_solved() else 0}\n")
+    out.write(f"solved_default:            {str(True) if kmpe_model.is_solved() else str(False)}\n")
+    out.write(f"time_default:              {kmpe_model.solve_statistics['solve_time'] if kmpe_model.is_solved() else 0}\n")
 
 
     # we use percentile also here, which overrides the default behavior of trusting all edges
