@@ -163,50 +163,71 @@ def compute_metrics(grouped_data):
 
 
 def generate_table(results, filename):
-    latex_code = r'''\begin{table}[]
-                    \caption{A table about %s. vars shows the percentage of edge variables set to 1 or more.}
-                    \begin{center}
-                    \begin{tabular}{|r|r|r|r|r|r|r|r|r|r|r|}
-                    \hline
-                    & \multirow{2}{*}{$w$} 
-                    & \multirow{2}{*}{\#g} 
-                    & \multirow{2}{*}{\shortstack{avg $n$\\(max $n$)}} 
-                    & \multirow{2}{*}{\shortstack{avg $m$\\(max $m$)}}
-                    & \multirow{2}{*}{\shortstack{avg num of nontrivial\\SCCs (max size)}}
-                    & \multirow{2}{*}{prep (s)} 
-                    & \multirow{2}{*}{\shortstack{vars \\ (\%)}} 
-                    & \multicolumn{2}{c|}{\#solved (avg time (s))} 
-                    & \multirow{2}{*}{$\times$} \\ \cline{9-10}
+    filename = filename.replace("_", r"\_")  # Escape underscores for LaTeX
 
-                    & & & & & & & & no safety & safety & \\ \hline
+    latex_code = f'''
+\\begin{{table}}[]
+\\caption{{{filename}. vars shows the percentage of edge variables set to 1 or more.}}
+\\begin{{center}}
+\\begin{{tabular}}{{|r|r|r|r|r|r|r|r|r|r|r|}}
+\\hline
+& \\multirow{{2}}{{*}}{{$w$}} 
+& \\multirow{{2}}{{*}}{{\\#g}} 
+& \\multirow{{2}}{{*}}{{\\shortstack{{avg $n$\\\\(max $n$)}}}} 
+& \\multirow{{2}}{{*}}{{\\shortstack{{avg $m$\\\\(max $m$)}}}}
+& \\multirow{{2}}{{*}}{{\\shortstack{{avg num of nontrivial\\\\SCCs (max size)}}}}
+& \\multirow{{2}}{{*}}{{prep (s)}} 
+& \\multirow{{2}}{{*}}{{\\shortstack{{vars (\\%)}}}} 
+& \\multicolumn{{2}}{{c|}}{{\\#solved (avg time (s))}} 
+& \\multirow{{2}}{{*}}{{$\\times$}} \\\\ \\cline{{9-10}}
 
-                    \multirow{3}{*}{\rotatebox{90}{\shortstack{\textbf{Dataset}\\\textbf{name}}}}''' % filename
+& & & & & & & & no safety & safety & \\\\ \\hline
+
+\\multirow{{3}}{{*}}{{\\rotatebox{{90}}{{\\shortstack{{\\textbf{{Dataset}}\\\\\\textbf{{name}}}}}}}}
+'''
 
     for width_range, metrics in results.items():
-        preprocess_seqs         = f"{metrics['preprocess_safety']:.3f}" if metrics['preprocess_safety'] != -1 else "-"
+        preprocess_seqs = f"{metrics['preprocess_safety']:.3f}" if metrics['preprocess_safety'] != -1 else "-"
         
-        solved_default_time     = (f"{metrics['solved_default']}" if metrics['solved_default'] != -1 else "-") + " (" + (f"{metrics['avg_time_default']:.3f}" if metrics['avg_time_default'] != -1 else "-")  + ")"
-        solved_sequences_time    = (f"{metrics['solved_safety']}" if metrics['solved_safety'] != -1 else "-")  + " (" + (f"{metrics['avg_time_safety']:.3f}"  if metrics['avg_time_safety']  != -1 else "-")  + ")"
+        solved_default_time = (
+            (f"{metrics['solved_default']}" if metrics['solved_default'] != -1 else "-") +
+            " (" +
+            (f"{metrics['avg_time_default']:.3f}" if metrics['avg_time_default'] != -1 else "-") +
+            ")"
+        )
+        solved_sequences_time = (
+            (f"{metrics['solved_safety']}" if metrics['solved_safety'] != -1 else "-") +
+            " (" +
+            (f"{metrics['avg_time_safety']:.3f}" if metrics['avg_time_safety'] != -1 else "-") +
+            ")"
+        )
 
-        fixed_sequences_to_1    = f"{metrics['edge_variables=1']:.1f}"  if metrics['edge_variables=1'] != -1 else "-"
         fixed_sequences_atleast = f"{metrics['edge_variables>=1']:.1f}" if metrics['edge_variables>=1'] != -1 else "-"
 
-        speedup                 = f"{metrics['speedup']:.1f}" if metrics['speedup'] != -1 else "-"
+        speedup = f"{metrics['speedup']:.1f}" if metrics['speedup'] != -1 else "-"
 
-        nodes_info              = ((f"{int(metrics['avg_nodes'])}") + " (" + f"{metrics['max_nodes']}" + ")" ) if metrics['avg_nodes'] != -1 else "-"
-        edges_info              = ((f"{int(metrics['avg_edges'])}") + " (" + f"{metrics['max_edges']}" + ")" ) if metrics['avg_edges'] != -1 else "-"
+        nodes_info = (f"{int(metrics['avg_nodes'])} ({metrics['max_nodes']})"
+                      if metrics['avg_nodes'] != -1 else "-")
+        edges_info = (f"{int(metrics['avg_edges'])} ({metrics['max_edges']})"
+                      if metrics['avg_edges'] != -1 else "-")
+        SCC_info = (f"{metrics['avg_SCCs']:.1f} ({metrics['size_of_largest_SCC']})"
+                    if metrics['avg_SCCs'] != -1 else "-")
 
-        SCC_info                = ((f"{metrics['avg_SCCs']:.1f}") + " (" + f"{metrics['size_of_largest_SCC']}" + ")" ) if metrics['avg_SCCs'] != -1 else "-"
+        latex_code += (
+            f"& {width_range} & {metrics['graphs']} & {nodes_info} & {edges_info} & {SCC_info} "
+            f"& {preprocess_seqs} & {fixed_sequences_atleast} & {solved_default_time} "
+            f"& {solved_sequences_time} & {speedup} \\\\\n"
+        )
 
-        latex_code += f"& {width_range} & {metrics['graphs']} & {nodes_info} & {edges_info} & {SCC_info} & {preprocess_seqs} & {fixed_sequences_atleast} & {solved_default_time} & {solved_sequences_time} & {speedup} \\\\\n"
-
-    #& & & & & & & & & & \\ \hline
-    latex_code += r'''
-                    \end{tabular}
-                    \end{center}
-                    \end{table}
-                    '''
+    latex_code += '''
+\\end{tabular}
+\\end{center}
+\\end{table}
+'''
     return latex_code
+
+
+
 
 
 def main(filename, tlimit):
@@ -214,7 +235,7 @@ def main(filename, tlimit):
     parsed_data  = parse_input_file(filename)
     grouped_data = group_by_width(parsed_data, tlimit)
     results      = compute_metrics(grouped_data)
-    latex_code   = generate_table(results,filename.replace("_", r"\_")) # to escape "_" in latex
+    latex_code   = generate_table(results,filename)
     with open(filename+".tex", "w") as f:
         f.write(latex_code)
 
