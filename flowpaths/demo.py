@@ -228,17 +228,20 @@ def main(mode, dataset, generate_stats):
             for entry in os.listdir(subfolder_path):
                 if entry.endswith(".graph"):
                     file = os.path.join(subfolder_path, entry)
+                    rel_path = os.path.relpath(subfolder_path, test_dir) # relative path from test_dir, then turn into filename
                     output_file = (
-                           subfolder_path.strip("/").replace("/", "-")
-                            + "_" + ilp_name
-                            + "_" + get_solver()
-                            + "_" + str(get_timelimit())
-                            + "_{}_{}.txt".format(dt_day, dt_time)
+                        rel_path.replace("/", "-")
+                        + "_" + ilp_name
+                        + "_" + get_solver()
+                        + "_" + str(get_timelimit())
+                        + "_{}_{}.txt".format(dt_day, dt_time)
                     )
+
                     ilp_solver(input_file=file, output_file=output_file)
 
     if generate_stats:
         stats.main(output_file, get_timelimit())
+
 
 
 if __name__ == "__main__":
