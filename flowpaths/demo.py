@@ -221,14 +221,18 @@ def main(mode, dataset, generate_stats):
             ilp_name   = "MIN"
 
     dataset_path = os.path.join(test_dir, dataset)
+    print("datasetpath:",dataset_path)
     for subfolder in os.listdir(dataset_path):
         subfolder_path = os.path.join(dataset_path, subfolder)
-
+        print("subfolder_path:",subfolder_path)
         if os.path.isdir(subfolder_path):
             for entry in os.listdir(subfolder_path):
+                print("entry:",entry)
                 if entry.endswith(".graph"):
                     file = os.path.join(subfolder_path, entry)
                     rel_path = os.path.relpath(subfolder_path, test_dir) # relative path from test_dir, then turn into filename
+                    print("file:",file)
+                    print("rel_path:",rel_path)
                     output_file = (
                         rel_path.replace("/", "-")
                         + "_" + ilp_name
@@ -236,7 +240,7 @@ def main(mode, dataset, generate_stats):
                         + "_" + str(get_timelimit())
                         + "_{}_{}.txt".format(dt_day, dt_time)
                     )
-
+                    print(output_file)
                     ilp_solver(input_file=file, output_file=output_file)
 
     if generate_stats:
