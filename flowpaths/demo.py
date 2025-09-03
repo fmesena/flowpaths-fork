@@ -204,6 +204,7 @@ def get_edgefilter():
     return CONFIG["EDGE_FILTER"]
 
 
+
 def main(mode, dataset, generate_stats):
     ilp_solver = None
     ilp_name = ""
@@ -219,12 +220,22 @@ def main(mode, dataset, generate_stats):
             ilp_solver = test_min_path_error
             ilp_name   = "MIN"
 
-    output_file = (dataset + "_" + ilp_name + "_" + get_solver() + "_" + str(get_timelimit()) + "_{}_{}.txt".format(dt_day, dt_time)).replace("/", "-")
+    dataset_path = os.path.join(test_dir, dataset)
+    for subfolder in os.listdir(dataset_path):
+        subfolder_path = os.path.join(dataset_path, subfolder)
 
-    for entry in os.listdir(test_dir+dataset):
-        if entry.endswith(".graph"):
-            file = os.path.join(test_dir+dataset, entry)
-            ilp_solver(input_file=file, output_file=output_file)
+        if os.path.isdir(subfolder_path):
+            for entry in os.listdir(subfolder_path):
+                if entry.endswith(".graph"):
+                    file = os.path.join(subfolder_path, entry)
+                    output_file = (
+                           subfolder_path.strip("/").replace("/", "-")
+                            + "_" + ilp_name
+                            + "_" + get_solver()
+                            + "_" + str(get_timelimit())
+                            + "_{}_{}.txt".format(dt_day, dt_time)
+                    )
+                    ilp_solver(input_file=file, output_file=output_file)
 
     if generate_stats:
         stats.main(output_file, get_timelimit())
