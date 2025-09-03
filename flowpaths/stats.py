@@ -123,7 +123,7 @@ def compute_metrics(grouped_data):
             'edge_variables=1': -1,
             'edge_variables>=1': -1,
             'avg_SCCs': -1,
-            'largest_SCC': -1,
+            'size_of_largest_SCC': -1,
             'speedup': -1
         }
 
@@ -137,7 +137,8 @@ def compute_metrics(grouped_data):
             results[width_range]['max_nodes']   = max(group['vertices'])
             results[width_range]['max_edges']   = max(group['edges'])
             results[width_range]['avg_SCCs']    = sum(group['number_of_nontrivial_SCCs']) / group['graphs']
-            results[width_range]['size_of_largest_SCC'] = max(group['size_of_largest_SCC'])
+            if (len(group['size_of_largest_SCC']) > 0):
+                results[width_range]['size_of_largest_SCC'] = max(group['size_of_largest_SCC'])
             
         # Average safety preprocessing time
         if len(group['preprocess_safety']) > 0:
@@ -225,8 +226,6 @@ def generate_table(results, filename):
 \\end{table}
 '''
     return latex_code
-
-
 
 
 
