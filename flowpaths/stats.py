@@ -136,7 +136,8 @@ def compute_metrics(grouped_data):
             results[width_range]['avg_edges']   = sum(group['edges'])/group['graphs']
             results[width_range]['max_nodes']   = max(group['vertices'])
             results[width_range]['max_edges']   = max(group['edges'])
-            results[width_range]['avg_SCCs']    = sum(group['number_of_nontrivial_SCCs']) / group['graphs']
+            if len(group['number_of_nontrivial_SCCs']) > 0:
+                results[width_range]['avg_SCCs']    = sum(group['number_of_nontrivial_SCCs']) / group['graphs']
             if (len(group['size_of_largest_SCC']) > 0):
                 results[width_range]['size_of_largest_SCC'] = max(group['size_of_largest_SCC'])
             
