@@ -213,12 +213,15 @@ def main(mode, dataset, generate_stats):
     
     output_files = []
     dataset_path = os.path.join(test_dir, dataset)
+    print("dataset_path:", dataset_path)
     for subfolder in os.listdir(dataset_path):
         subfolder_path = os.path.join(dataset_path, subfolder)
+        print("subfolder_path:", subfolder_path)
         if os.path.isdir(subfolder_path):
             for entry in os.listdir(subfolder_path):
                 if entry.endswith(".graph"):
                     file = os.path.join(subfolder_path, entry)
+                    print("file:", file)
                     rel_path = os.path.relpath(subfolder_path, test_dir) # relative path from test_dir, then turn into filename
                     output_file = (
                         rel_path.replace("/", "-")
