@@ -208,6 +208,7 @@ def main(filenames, tlimit):
         latex_code     = generate_table(results, re.search(r"g(\d+)(?=-)", filename).group(1))
         stats_genomes  += latex_code
 
+    print(filenames)
     filename = filenames[0].replace("_", "\\_")
 
     table_header = f'''
