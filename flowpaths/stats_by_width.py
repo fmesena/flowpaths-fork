@@ -230,47 +230,14 @@ def generate_table(results, filename):
 
 
 
-def main(filenames, tlimit):
+def main(filename, tlimit):
 
-    stats_genomes = "" 
-
-    for filename in filenames:
-
-        parsed_data    = parse_input_file(filename)
-        grouped_data   = group_by_width(parsed_data, tlimit)
-        results        = compute_metrics(grouped_data)
-        latex_code     = generate_table(results,filename)
-        stats_genomes  += latex_code
-
-    table_header = f'''
-\\begin{{table}}[]
-\\caption{{{filename}. vars shows the percentage of edge variables set to 1 or more.}}
-\\begin{{center}}
-\\begin{{tabular}}{{|r|r|r|r|r|r|r|r|r|r|r|}}
-\\hline
-& \\multirow{{2}}{{*}}{{$w$}} 
-& \\multirow{{2}}{{*}}{{\\#g}} 
-& \\multirow{{2}}{{*}}{{\\shortstack{{avg $n$\\\\(max $n$)}}}} 
-& \\multirow{{2}}{{*}}{{\\shortstack{{avg $m$\\\\(max $m$)}}}}
-& \\multirow{{2}}{{*}}{{\\shortstack{{avg num of nontrivial\\\\SCCs (max size)}}}}
-& \\multirow{{2}}{{*}}{{prep (s)}} 
-& \\multirow{{2}}{{*}}{{\\shortstack{{vars (\\%)}}}} 
-& \\multicolumn{{2}}{{c|}}{{\\#solved (avg time (s))}} 
-& \\multirow{{2}}{{*}}{{$\\times$}} \\\\ \\cline{{9-10}}
-
-& & & & & & & & no safety & safety & \\\\ \\hline
-
-\\multirow{{3}}{{*}}{{\\rotatebox{{90}}{{\\shortstack{{\\textbf{{Dataset}}\\\\\\textbf{{name}}}}}}}}
-'''
-    
-    latex_tail += '''
-\\end{tabular}
-\\end{center}
-\\end{table}
-'''
-
+    parsed_data  = parse_input_file(filename)
+    grouped_data = group_by_width(parsed_data, tlimit)
+    results      = compute_metrics(grouped_data)
+    latex_code   = generate_table(results,filename)
     with open(filename+".tex", "w") as f:
-        f.write(table_header + stats_genomes + latex_tail)
+        f.write(latex_code)
 
 
 if __name__ == "__main__":
@@ -281,4 +248,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    main(filename=[args.input], tlimit=args.tlimit)
+    main(filename=args.input, tlimit=args.tlimit)

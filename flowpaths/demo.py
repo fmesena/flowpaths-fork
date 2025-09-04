@@ -41,8 +41,8 @@ def test_min_flow_decomp(input_file: str, output_file: str):
     mfd_model.solve()
     if mfd_model.is_solved():
         assert(mfd_model.is_valid_solution())
-    out.write(f"solved_default:            {str(True) if mfd_model.is_solved() else str(False)}\n")
-    out.write(f"time_default:              {mfd_model.solve_statistics['solve_time'] if mfd_model.is_solved() else 0}\n")
+    out.write(f"solved_default:                 {mfd_model.is_solved()}\n")
+    out.write(f"time_default:                   {mfd_model.solve_statistics['solve_time'] if mfd_model.is_solved() else 0}\n")
 
     #SAFETY
     mfd_model = fp.MinFlowDecompCycles(
@@ -91,8 +91,8 @@ def test_least_abs_errors(input_file: str, output_file: str):
     klae_model.solve()
     if klae_model.is_solved():
         assert(klae_model.is_valid_solution())
-    out.write(f"solved_default:            {str(True) if klae_model.is_solved() else str(False)}\n")
-    out.write(f"time_default:              {klae_model.solve_statistics['solve_time'] if klae_model.is_solved() else 0}\n")
+    out.write(f"solved_default:                 {klae_model.is_solved()}\n")
+    out.write(f"time_default:                   {klae_model.solve_statistics['solve_time'] if klae_model.is_solved() else 0}\n")
 
     # here we also pass the percentile
     klae_percentile_model = fp.kLeastAbsErrorsCycles(
@@ -139,9 +139,8 @@ def test_min_path_error(input_file: str, output_file: str):
     kmpe_model.solve()
     if kmpe_model.is_solved():
         assert(kmpe_model.is_valid_solution())
-    out.write(f"solved_default:            {str(True) if kmpe_model.is_solved() else str(False)}\n")
-    out.write(f"time_default:              {kmpe_model.solve_statistics['solve_time'] if kmpe_model.is_solved() else 0}\n")
-
+    out.write(f"solved_default:                 {kmpe_model.is_solved()}\n")
+    out.write(f"time_default:                   {kmpe_model.solve_statistics['solve_time'] if kmpe_model.is_solved() else 0}\n")
 
     # we use percentile also here, which overrides the default behavior of trusting all edges
     kmpe_percentile_model = fp.kMinPathErrorCycles(
@@ -165,28 +164,20 @@ def test_min_path_error(input_file: str, output_file: str):
 
 def write_stats_to_file(model, file):
     solved = model.is_solved()
-    file.write(f"solved_safety:             {str(True) if solved else str(False)}\n")
+    file.write(f"solved_safety:                 {solved}\n")
 
     if solved:
         assert(model.is_valid_solution()) # Keep this to verify the solution
         statistics = model.solve_statistics
-        file.write(f"time_safety:               {statistics['solve_time']}\n")
-        file.write(f"edge_variables=1:          {statistics['edge_variables=1']}\n")
-        file.write(f"edge_variables>=1:         {statistics['edge_variables>=1']}\n")
-        file.write(f"preprocess_safety:         {statistics.get('safe_sequences_time', 0)}\n")
-        file.write(f"number_of_nontrivial_SCCs: {statistics['number_of_nontrivial_SCCs']}\n")
-        file.write(f"size_of_largest_SCC:       {statistics['size_of_largest_SCC']}\n")
+        file.write(f"time_safety:                   {statistics['solve_time']}\n")
+        file.write(f"edge_variables=1:              {statistics['edge_variables=1']}\n")
+        file.write(f"edge_variables>=1:             {statistics['edge_variables>=1']}\n")
+        file.write(f"preprocess_safety:             {statistics.get('safe_sequences_time', 0)}\n")
+        file.write(f"number_of_nontrivial_SCCs:     {statistics['number_of_nontrivial_SCCs']}\n")
+        file.write(f"size_of_largest_SCC:           {statistics['size_of_largest_SCC']}\n")
+        file.write(f"avg_size_of_non_trivial_SCC:   {statistics['avg_size_of_non_trivial_SCC']}\n")
     else:
-        file.write("time_safety:                0\n")
-    
-    '''
-    if mfd_model.is_solved():
-        assert(mfd_model.is_valid_solution())
-    out.write(f"solved_default:            {str(True) if mfd_model.is_solved() else str(False)}\n")
-    out.write(f"time_default:              {mfd_model.solve_statistics['solve_time'] if mfd_model.is_solved() else 0}\n")
-
-    '''
-    
+        file.write("time_safety:                    0\n")
     return
 
 
@@ -219,20 +210,16 @@ def main(mode, dataset, generate_stats):
         case '2':
             ilp_solver = test_min_path_error
             ilp_name   = "MIN"
-
+    
+    output_files = []
     dataset_path = os.path.join(test_dir, dataset)
-    print("datasetpath:",dataset_path)
     for subfolder in os.listdir(dataset_path):
         subfolder_path = os.path.join(dataset_path, subfolder)
-        print("subfolder_path:",subfolder_path)
         if os.path.isdir(subfolder_path):
             for entry in os.listdir(subfolder_path):
-                print("entry:",entry)
                 if entry.endswith(".graph"):
                     file = os.path.join(subfolder_path, entry)
                     rel_path = os.path.relpath(subfolder_path, test_dir) # relative path from test_dir, then turn into filename
-                    print("file:",file)
-                    print("rel_path:",rel_path)
                     output_file = (
                         rel_path.replace("/", "-")
                         + "_" + ilp_name
@@ -240,11 +227,11 @@ def main(mode, dataset, generate_stats):
                         + "_" + str(get_timelimit())
                         + "_{}_{}.txt".format(dt_day, dt_time)
                     )
-                    print(output_file)
+                    output_files.append(output_file)
                     ilp_solver(input_file=file, output_file=output_file)
 
-    if generate_stats:
-        stats.main(output_file, get_timelimit())
+        if generate_stats:
+            stats.main(output_files, get_timelimit())
 
 
 
