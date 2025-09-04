@@ -232,8 +232,8 @@ def main(mode, dataset, generate_stats):
                     print(output_file)
                     ilp_solver(input_file=file, output_file=output_file)
 
-        if generate_stats:
-            stats_by_width.main(output_file, get_timelimit())
+                    if generate_stats:
+                        stats_by_width.main(output_file, get_timelimit())
 
 
 
