@@ -232,7 +232,7 @@ def main(mode, dataset, generate_stats):
                     ilp_solver(input_file=file, output_file=output_file)
 
         if generate_stats:
-            stats_by_width.main(output_files, get_timelimit())
+            stats_by_width.main(output_file, get_timelimit())
 
 
 
