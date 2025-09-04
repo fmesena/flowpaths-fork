@@ -212,7 +212,7 @@ def main(mode, dataset, generate_stats):
             ilp_solver = test_min_path_error
             ilp_name   = "MIN"
     
-    output_files = []
+    #output_files = []
     dataset_path = os.path.join(test_dir, dataset)
     for subfolder in os.listdir(dataset_path):
         subfolder_path = os.path.join(dataset_path, subfolder)
@@ -228,7 +228,8 @@ def main(mode, dataset, generate_stats):
                         + "_" + str(get_timelimit())
                         + "_{}_{}.txt".format(dt_day, dt_time)
                     )
-                    output_files.append(output_file)
+                    #output_files.append(output_file)
+                    print(output_file)
                     ilp_solver(input_file=file, output_file=output_file)
 
         if generate_stats:
