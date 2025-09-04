@@ -210,7 +210,7 @@ def main(filenames, tlimit):
 
     table_header = f'''
 \\begin{{table}}[]
-\\caption{{{filename.replace("_", r"\_")}}}
+\\caption{{{filename.replace("_", "\\_")}}}
 \\begin{{center}}
 \\begin{{tabular}}{{|l|r|r|r|r|r|r|r|r|r|r|}}
 \\hline
@@ -227,7 +227,7 @@ def main(filenames, tlimit):
 
 & & & & & & & & no safety & safety & \\\\ \\hline
 '''
-    
+
     latex_tail = '''
 \\end{tabular}
 \\end{center}
