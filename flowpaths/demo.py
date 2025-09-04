@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import argparse
 import stats
+import stats_by_width
 
 test_dir     = "../../flow-datasets/cyclic-graphs/"
 current_time = datetime.now()
@@ -231,7 +232,7 @@ def main(mode, dataset, generate_stats):
                     ilp_solver(input_file=file, output_file=output_file)
 
         if generate_stats:
-            stats.main(output_files, get_timelimit())
+            stats_by_width.main(output_files, get_timelimit())
 
 
 
