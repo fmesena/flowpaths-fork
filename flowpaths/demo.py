@@ -199,7 +199,7 @@ def get_edgefilter():
 def main(mode, dataset, generate_stats):
     ilp_solver = None
     ilp_name = ""
-
+    print("inside main")
     match mode:
         case '0':
             ilp_solver = test_min_flow_decomp
@@ -228,8 +228,10 @@ def main(mode, dataset, generate_stats):
                         + "_{}_{}.txt".format(dt_day, dt_time)
                     )
                     output_files.append(output_file)
+                    print("entering ilp")
                     ilp_solver(input_file=file, output_file=output_file)
 
+    print("before genstats")
     if generate_stats:
         stats.main(output_files, get_timelimit())
 
@@ -258,4 +260,6 @@ if __name__ == "__main__":
     set_solver(args.solver)
     set_edgefilter(args.efilter)
 
+    print("entering main")
     main(mode=args.mode, dataset=args.input, generate_stats=args.stats)
+    print("exiting main")
